@@ -6,6 +6,8 @@ export default function APICallWebsite(): JSX.Element {
   const [CHANNEL_NAME, SETCHANNEL_NAME] = useState("");
   const [VIDEO_ID, SETVIDEO_ID] = useState("");
   const [output, setOutput] = useState("");
+  const [isSunny, setIsSunny] = useState(true);
+  const [uriName, setUriName] = useState<string>("https://feelsunnyman.github.io/tools/timer/");
   const [createdAt, setcreatedAt] = useState("");
   const [copyButton, setcopyButton] = useState<string | ReactNode>(
     <CopyIcon />
@@ -22,9 +24,21 @@ export default function APICallWebsite(): JSX.Element {
     }
   };
 
+  const changeUrl = () => {
+    if (isSunny){
+      setIsSunny(false);
+      setUriName("https://ringomar.github.io/timer/")
+    }
+    else {
+      setIsSunny(true);
+      setUriName("https://feelsunnyman.github.io/tools/timer/")
+
+    }
+ }
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard
-      .writeText("https://ringomar.github.io/timer?time=" + text)
+      .writeText(`${uriName}?time=` + text)
       .then(() => {
         console.log("Text copied to clipboard:", text);
         setcopyButton("Copied!");
@@ -153,7 +167,7 @@ export default function APICallWebsite(): JSX.Element {
                       style={{ color: "rgb(248, 248, 242)" }}
                     >
                       <span className="token plain">
-                        https://ringomar.github.io/timer?time=
+                      {uriName}?time=
                         <strong>{createdAt}</strong>
                       </span>
                     </span>
@@ -165,6 +179,8 @@ export default function APICallWebsite(): JSX.Element {
                 >
                   {copyButton}
                 </button>
+                <label htmlFor="feelSunny">☀️?</label>
+                <input type="checkbox" id="feelSunny" defaultChecked={isSunny} onClick={changeUrl} />
               </div>
             </div>
           </div>
