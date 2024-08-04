@@ -1,0 +1,22 @@
+{
+  "title": {
+    "message": "The Timekeeper",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "Logo",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Docs": {
+    "message": "Docs",
+    "description": "Navbar item with label Docs"
+  },
+  "item.label.Broadcast API": {
+    "message": "Broadcast API",
+    "description": "Navbar item with label Broadcast API"
+  },
+  "item.label.Project": {
+    "message": "Project",
+    "description": "Navbar item with label Project"
+  }
+}

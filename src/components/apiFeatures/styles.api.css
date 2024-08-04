@@ -99,11 +99,7 @@ main {
   cursor: pointer;
   padding: 7px;
   font-family: nunito, roboto, proxima-nova, "proxima nova", sans-serif;
-  font-size: 1.125rem;
-  position: absolute;
-  right: 0;
-  top: 0px;
-  transform: translateZ(0) scale(1);
+  font-size: 1.125rem;  transform: translateZ(0) scale(1);
   transition: transform 0.2s;
 }
 
@@ -148,6 +144,12 @@ main {
   grid-template-areas:
     "action1 action2"
     "getter setter";
+}
+
+.action2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .getter {
@@ -196,6 +198,7 @@ main {
 .debug {
   grid-area: debug;
 }
+
 .form-inline {
   display: flex;
   flex-direction: column;
@@ -209,7 +212,8 @@ main {
   width: 100%;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ff5656; /* Base color */
+  border: 1px solid #ff5656;
+  /* Base color */
   border-radius: 5px;
 }
 
@@ -225,5 +229,6 @@ main {
 
 .form-field:focus {
   outline: none;
-  border-color: #ff5656; /* Base color */
+  border-color: #ff5656;
+  /* Base color */
 }

@@ -7,7 +7,9 @@ export default function APICallWebsite(): JSX.Element {
   const [VIDEO_ID, SETVIDEO_ID] = useState("");
   const [output, setOutput] = useState("");
   const [isSunny, setIsSunny] = useState(true);
-  const [uriName, setUriName] = useState<string>("https://feelsunnyman.github.io/tools/timer/");
+  const [uriName, setUriName] = useState<string>(
+    "https://feelsunnyman.github.io/tools/timer/"
+  );
   const [createdAt, setcreatedAt] = useState("");
   const [copyButton, setcopyButton] = useState<string | ReactNode>(
     <CopyIcon />
@@ -25,16 +27,13 @@ export default function APICallWebsite(): JSX.Element {
   };
 
   const changeUrl = () => {
-    if (isSunny){
-      setIsSunny(false);
-      setUriName("https://ringomar.github.io/timer/")
-    }
-    else {
-      setIsSunny(true);
-      setUriName("https://feelsunnyman.github.io/tools/timer/")
-
-    }
- }
+    setIsSunny(!isSunny);
+    setUriName(
+      isSunny
+        ? "https://ringomar.github.io/timer/"
+        : "https://feelsunnyman.github.io/tools/timer/"
+    );
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard
@@ -112,6 +111,16 @@ export default function APICallWebsite(): JSX.Element {
             </div>
             <div className="action2">
               <h1>Step Two: Copy Url</h1>
+
+              <div className="SunCheck">
+                <label htmlFor="feelSunny">☀️?</label>
+                <input
+                  type="checkbox"
+                  id="feelSunny"
+                  defaultChecked={isSunny}
+                  onClick={changeUrl}
+                />
+              </div>
             </div>
             <div className="getter">
               <div className="name">
@@ -153,12 +162,13 @@ export default function APICallWebsite(): JSX.Element {
               </div>
             </div>
             <div className="setter">
-              <div className="codeBlockContent_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module">
+              <div className="codeBlockContent_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module outputLayer">
                 <pre
                   className="prism-code language-text codeBlock_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module thin-scrollbar"
                   style={{
                     color: "rgb(248, 248, 242)",
                     backgroundColor: "rgb(40, 42, 54)",
+                    width: "90%",
                   }}
                 >
                   <code className="codeBlockLines_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module">
@@ -167,7 +177,7 @@ export default function APICallWebsite(): JSX.Element {
                       style={{ color: "rgb(248, 248, 242)" }}
                     >
                       <span className="token plain">
-                      {uriName}?time=
+                        {uriName}?time=
                         <strong>{createdAt}</strong>
                       </span>
                     </span>
@@ -179,8 +189,6 @@ export default function APICallWebsite(): JSX.Element {
                 >
                   {copyButton}
                 </button>
-                <label htmlFor="feelSunny">☀️?</label>
-                <input type="checkbox" id="feelSunny" defaultChecked={isSunny} onClick={changeUrl} />
               </div>
             </div>
           </div>
