@@ -33,7 +33,7 @@ export default function Home(): JSX.Element {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="An elapse time counter for OBS">
+      description="Docs for an elapse time counter for OBS">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

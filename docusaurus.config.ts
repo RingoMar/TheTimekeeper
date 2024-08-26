@@ -33,6 +33,10 @@ const config: Config = {
     [
       "classic",
       {
+        gtag: {
+          trackingID: "G-0GS2KLZXCG",
+          anonymizeIP: false,
+        },
         docs: {
           sidebarPath: "./sidebars.ts",
           // Please change this to your repo.
@@ -52,6 +56,11 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
+    colorMode: {
+      defaultMode: "dark",
+      disableSwitch: false,
+      respectPrefersColorScheme: false,
+    },
     image: "img/docusaurus-social-card.jpg",
     navbar: {
       title: "The Timekeeper",
@@ -68,13 +77,24 @@ const config: Config = {
         },
         {
           to: "/api",
-          sidebarId: "tutorialSidebar",
+          sidebarid: "apiSidebar",
           position: "left",
           label: "Broadcast API",
         },
         {
+          to: "/custom",
+          sidebarid: "customSidebar",
+          position: "left",
+          label: "Custom Time",
+        },
+        {
           href: "https://github.com/RingoMar/TheTimekeeper",
           label: "Project",
+          position: "right",
+        },
+        {
+          href: "https://ko-fi.com/ringomar",
+          label: "Tip",
           position: "right",
         },
       ],

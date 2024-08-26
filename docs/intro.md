@@ -30,9 +30,5 @@ This URL format allows users to set a specific starting time for the timer displ
 2. Click the "+" button and select "Browser Source".
 3. In the "Create/Select Source" window, name your source (e.g., "Web Page") and click "OK".
 4. In the "Browser Source Properties" window, enter the URL (e.g., https://ringomar.github.io/timer/?time=2024-03-29T22:00:33Z) to display.
-5. For the "Width" and "Height" settings, enter the desired dimensions 
-    
-    `Width`: 400  
-    `Height`: 150 
-6. Leave the "Custom CSS" settings at their defaults.
-7. Click "OK" to close the window and apply the settings.
+5. Leave the "Custom CSS" settings at their defaults.
+6. Click "OK" to close the window and apply the settings.

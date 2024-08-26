@@ -1,0 +1,104 @@
+.time-container {
+    max-width: 600px;
+    margin: auto;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.settings-container {
+    max-width: 780px;
+    margin: auto;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.time-container-fix {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.time-container-preview {
+    max-width: 780px;
+    margin: auto;
+    overflow: hidden;
+}
+
+.time-header {
+    text-align: left;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.time-header>button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #1a1515;
+    background-color: #151212;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.time-header>button:hover {
+    background-color: #0D0D0B;
+}
+
+.time-header>button:active {
+    transform: translateY(2px);
+}
+
+.time-header h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.time-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.time-details div {
+    display: flex;
+    align-items: center;
+}
+
+.time-details div span {
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.time-box {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.time-box div {
+    margin-bottom: 10px;
+}
+
+.time-box div:last-child {
+    margin-bottom: 0;
+}
+
+.time-box span {
+    font-weight: bold;
+}
+
+.time-selector input {
+    padding: 5px;
+    font-size: 16px;
+    width: 80%;
+    height: 2rem;
+}
+
+.selectorRow {
+    display: flex;
+}

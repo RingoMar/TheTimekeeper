@@ -1,8 +1,11 @@
 import React, { ReactNode, useState } from "react";
+import FloatingLabelInput from "./resources/FloatingLabelInput";
+import ExpandableText from "./resources/ExpandableText";
 import "./styles.api.css";
 import CopyIcon from "./copy";
 
 export default function APICallWebsite(): JSX.Element {
+  const [showTooltip, setShowTooltip] = useState(false);
   const [CHANNEL_NAME, SETCHANNEL_NAME] = useState("");
   const [VIDEO_ID, SETVIDEO_ID] = useState("");
   const [output, setOutput] = useState("");
@@ -35,22 +38,69 @@ export default function APICallWebsite(): JSX.Element {
     );
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard
-      .writeText(`${uriName}?time=` + text)
-      .then(() => {
-        console.log("Text copied to clipboard:", text);
-        setcopyButton("Copied!");
+  const copyToClipboard = () => {
+    try {
+      if (!createdAt) {
+        throw new Error("No time");
+      }
+      navigator.clipboard
+        .writeText(`${uriName}?time=${createdAt}`)
+        .then(() => {
+          console.log("Text copied to clipboard:", createdAt);
+          setcopyButton("Copied!");
 
-        // After 2 seconds, revert the button text back to "Copy"
-        setTimeout(() => {
-          setcopyButton(<CopyIcon />);
-        }, 1700);
-      })
-      .catch((error) => {
-        console.error("Unable to copy text to clipboard:", error);
-        setcopyButton("error");
+          // After 2 seconds, revert the button text back to "Copy"
+        })
+        .catch((error) => {
+          console.error("Unable to copy text to clipboard:", error);
+          throw new Error(error);
+        });
+    } catch (error) {
+      setcopyButton(error);
+    }
+
+    setTimeout(() => {
+      setcopyButton(<CopyIcon />);
+    }, 1700);
+  };
+
+  const checkLive = async () => {
+    try {
+      let gqlQuery = {
+        operationName: "UseLive",
+        query:
+          "query UseLive($channelLogin: String!) { user(login: $channelLogin) { id login stream { id createdAt __typename } __typename  }}",
+        variables: {
+          channelLogin: CHANNEL_NAME.toLowerCase(),
+        },
+      };
+
+      const response = await fetch("https://gql.twitch.tv/gql", {
+        method: "post",
+        headers: {
+          "client-id": "kimne78kx3ncx6brgo4mv6wki5h1ko",
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gqlQuery),
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const streamlive = await response.json();
+      console.log(streamlive);
+      // Check if the video property is null
+      if (streamlive.data.user.stream === null) {
+        throw new Error("Bad request: Channel Not live!");
+      }
+      setcreatedAt(streamlive.data.user.stream.createdAt);
+      setOutput(JSON.stringify(streamlive, null, 2));
+    } catch (error) {
+      console.error("Error:", error);
+      setOutput("Error occurred. Please try again. " + error);
+    }
   };
 
   const makeAPICall = async () => {
@@ -93,6 +143,18 @@ export default function APICallWebsite(): JSX.Element {
     }
   };
 
+  const handleKeyDownLive = (event: { key: string; }) => {
+    if (event.key === 'Enter') {
+      checkLive()
+    }
+  };
+
+  const handleKeyDownVod = (event: { key: string; }) => {
+    if (event.key === 'Enter') {
+      checkLive()
+    }
+  };
+
   return (
     <div className="container container-api">
       <h1>Retrieve Stream Start Time</h1>
@@ -105,97 +167,134 @@ export default function APICallWebsite(): JSX.Element {
       </p>
       <div className="apiContent">
         <div className="callcenter">
-          <div className="gridContainer">
-            <div className="action1">
-              <h1>Step One: Get the Vod</h1>
-            </div>
-            <div className="action2">
-              <h1>Step Two: Copy Url</h1>
-
-              <div className="SunCheck">
-                <label htmlFor="feelSunny">☀️?</label>
-                <input
-                  type="checkbox"
-                  id="feelSunny"
-                  defaultChecked={isSunny}
-                  onClick={changeUrl}
-                />
-              </div>
-            </div>
-            <div className="getter">
-              <div className="name">
-                <div className="form-inline">
-                  <div className="form-group">
-                    <label htmlFor="name" className="form-field">
-                      TWITCH USER NAME
-                    </label>
-                    <input
-                      type="input"
-                      className="form-field"
-                      placeholder="KaiCeant"
-                      value={CHANNEL_NAME}
-                      onChange={(e) => SETCHANNEL_NAME(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="vod">
-                <div className="form-inline">
-                  <div className="form-group">
-                    <label htmlFor="name" className="form-field">
-                      VOD LINK
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="2000000000"
-                      className="form-field"
-                      value={VIDEO_ID}
-                      onChange={(e) => SETVIDEO_ID(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="smtBtn">
-                <button className="submitButton" onClick={makeAPICall}>
-                  Load Stream Data
-                </button>
-              </div>
-            </div>
-            <div className="setter">
-              <div className="codeBlockContent_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module outputLayer">
-                <pre
-                  className="prism-code language-text codeBlock_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module thin-scrollbar"
-                  style={{
-                    color: "rgb(248, 248, 242)",
-                    backgroundColor: "rgb(40, 42, 54)",
-                    width: "90%",
-                  }}
-                >
-                  <code className="codeBlockLines_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module">
-                    <span
-                      className="token-line"
-                      style={{ color: "rgb(248, 248, 242)" }}
+          <h3>CREATE URL</h3>
+          <div className="create-time">
+            <div className="create-container">
+              <div className={`customTime`}>
+                <div className="infoTwitch time-container-preview">
+                  <h3>
+                    Use Twitch's GraphQL API to retrieve the precise time in UTC
+                    seconds.
+                  </h3>
+                  <small className="highlight">
+                    *Use the{" "}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#F5FAD5"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
-                      <span className="token plain">
-                        {uriName}?time=
-                        <strong>{createdAt}</strong>
+                      <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                    </svg>{" "}
+                    to fetch the current live stream{" "}
+                  </small>
+                  <div className="SunCheck">
+                    <label htmlFor="feelSunny" title="Feelng Sunny?" className="radioBtn">
+                      <input
+                        title="Feelng Sunny?"
+                        type="checkbox"
+                        id="feelSunny"
+                        className="radioAction"
+                        defaultChecked={isSunny}
+                        onClick={changeUrl}
+                      />
+                      ☀️?
+                    </label>
+                  </div>
+                </div>
+                <div className="codeBlockContent_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module outputLayer time-container-preview">
+                  <pre
+                    className="prism-code language-text codeBlock_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module thin-scrollbar"
+                    style={{
+                      color: "rgb(248, 248, 242)",
+                      backgroundColor: "rgb(40, 42, 54)",
+                      width: "100%",
+                    }}
+                  >
+                    <code className="codeBlockLines_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module">
+                      <span
+                        className="token-line copy-container"
+                        style={{ color: "rgb(248, 248, 242)" }}
+                      >
+                        <span className="token plain resp_copy">
+                          {uriName}?time=
+                          <strong>{createdAt}</strong>
+                        </span>
+                        <button
+                          className="copy-button"
+                          onClick={() => copyToClipboard()}
+                        >
+                          {copyButton}
+                        </button>
                       </span>
-                    </span>
-                  </code>
-                </pre>
-                <button
-                  className="copy-button"
-                  onClick={() => copyToClipboard(createdAt)}
-                >
-                  {copyButton}
-                </button>
+                    </code>
+                  </pre>
+                </div>
+
+                <div className="time-container-preview">
+                  <div className="fetch-vod">
+                    <FloatingLabelInput
+                      label="TWITCH USER NAME"
+                      value={CHANNEL_NAME}
+                      onChange={SETCHANNEL_NAME}
+                      handleKeyDown={handleKeyDownLive}
+                    />
+                    <div className="fetch-button">
+                      <button
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                        onClick={checkLive}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="25"
+                          height="25"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#F5FAD5"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                        </svg>
+                      </button>
+                      {showTooltip && (
+                        <div className="fetch-tool-tip">Fetch current vod</div>
+                      )}
+                    </div>
+                  </div>
+                  <FloatingLabelInput
+                    label="VOD LINK"
+                    value={VIDEO_ID}
+                    onChange={SETVIDEO_ID}
+                    handleKeyDown={handleKeyDownVod}
+                  />
+
+                  <div className="smtBtn">
+                    <button
+                      className="submitButton"
+                      onClick={makeAPICall}
+                      disabled={!(VIDEO_ID && CHANNEL_NAME)}
+                    >
+                      Load Stream Data
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div className="debugContain">
           <h3>RAW OUTPUT</h3>
-          <pre>{output}</pre>
+          <pre>
+            <ExpandableText text={output} maxLength={200} />
+          </pre>
         </div>
       </div>
     </div>
