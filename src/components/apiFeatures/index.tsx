@@ -10,6 +10,8 @@ export default function APICallWebsite(): JSX.Element {
   const [VIDEO_ID, SETVIDEO_ID] = useState("");
   const [output, setOutput] = useState("");
   const [isSunny, setIsSunny] = useState(true);
+  const [isStroke, setIsStroke] = useState(false);
+  const [rangeStroke, setRangeStroke] = useState(2);
   const [uriName, setUriName] = useState<string>(
     "https://feelsunnyman.github.io/tools/timer/"
   );
@@ -38,13 +40,19 @@ export default function APICallWebsite(): JSX.Element {
     );
   };
 
+  const updateStroke = (e) => {
+    setRangeStroke(e.target.value);
+    setIsStroke(e.target.value != 2);
+  };
+
   const copyToClipboard = () => {
     try {
       if (!createdAt) {
         throw new Error("No time");
       }
+      let addStroke = isStroke ? `&stroke=${rangeStroke}` : "";
       navigator.clipboard
-        .writeText(`${uriName}?time=${createdAt}`)
+        .writeText(`${uriName}?time=${createdAt}${addStroke}`)
         .then(() => {
           console.log("Text copied to clipboard:", createdAt);
           setcopyButton("Copied!");
@@ -143,15 +151,15 @@ export default function APICallWebsite(): JSX.Element {
     }
   };
 
-  const handleKeyDownLive = (event: { key: string; }) => {
-    if (event.key === 'Enter') {
-      checkLive()
+  const handleKeyDownLive = (event: { key: string }) => {
+    if (event.key === "Enter") {
+      checkLive();
     }
   };
 
-  const handleKeyDownVod = (event: { key: string; }) => {
-    if (event.key === 'Enter') {
-      checkLive()
+  const handleKeyDownVod = (event: { key: string }) => {
+    if (event.key === "Enter") {
+      checkLive();
     }
   };
 
@@ -193,18 +201,43 @@ export default function APICallWebsite(): JSX.Element {
                     </svg>{" "}
                     to fetch the current live stream{" "}
                   </small>
-                  <div className="SunCheck">
-                    <label htmlFor="feelSunny" title="Feelng Sunny?" className="radioBtn">
-                      <input
+                  <div className="flex-box">
+                    <div className="SunCheck">
+                      <label
+                        htmlFor="feelSunny"
                         title="Feelng Sunny?"
-                        type="checkbox"
-                        id="feelSunny"
-                        className="radioAction"
-                        defaultChecked={isSunny}
-                        onClick={changeUrl}
-                      />
-                      ☀️?
-                    </label>
+                        className="radioBtn"
+                      >
+                        <input
+                          title="Feelng Sunny?"
+                          type="checkbox"
+                          id="feelSunny"
+                          className="radioAction"
+                          defaultChecked={isSunny}
+                          onClick={changeUrl}
+                        />
+                        ☀️?
+                      </label>
+                    </div>
+                    <div className="setOutline">
+                      <label
+                        htmlFor="outlineStroke"
+                        title="Change Stroke outline"
+                        className="radioBtn"
+                      >
+                        Text Outline: {rangeStroke}
+                        <input
+                          title="Feelng Sunny?"
+                          type="range"
+                          id="outlineStroke"
+                          value={rangeStroke}
+                          min={1}
+                          max={10}
+                          step={1}
+                          onChange={updateStroke}
+                        />
+                      </label>
+                    </div>
                   </div>
                 </div>
                 <div className="codeBlockContent_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module outputLayer time-container-preview">
@@ -223,7 +256,7 @@ export default function APICallWebsite(): JSX.Element {
                       >
                         <span className="token plain resp_copy">
                           {uriName}?time=
-                          <strong>{createdAt}</strong>
+                          <strong>{createdAt}</strong>{isStroke ? `&stroke=${rangeStroke}` : ""}
                         </span>
                         <button
                           className="copy-button"

@@ -8,6 +8,8 @@ main {
 
 .container-api {
   padding: 30px;
+  width: 89%;
+  margin: auto;
 }
 
 .apiContent {
@@ -383,9 +385,22 @@ button:disabled {
   .floating-label-input .floating-label {
     font-size: 10px;
   }
+
+  .flex-box,
+  .settings-container {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 @media only screen and (min-width: 600px) and (max-width: 900px) {
+
+  .flex-box,
+  .settings-container {
+    display: flex;
+    flex-direction: column;
+  }
+
   .cutsomFunctions {
     display: flex;
     flex-direction: column;
@@ -397,4 +412,15 @@ button:disabled {
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+}
+
+#outlineStroke:hover {
+  cursor: e-resize;
+}
+
+.flex-box {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
