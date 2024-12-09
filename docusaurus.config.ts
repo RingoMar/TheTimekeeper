@@ -133,7 +133,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} RingoMar. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} RingoMar. This website is not affiliated with Twitch Interactive Inc.`,
     },
     prism: {
       theme: prismThemes.github,

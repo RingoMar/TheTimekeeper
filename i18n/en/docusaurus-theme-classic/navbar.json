@@ -18,5 +18,13 @@
   "item.label.Project": {
     "message": "Project",
     "description": "Navbar item with label Project"
+  },
+  "item.label.Custom Time": {
+    "message": "Custom Time",
+    "description": "Navbar item with label Custom Time"
+  },
+  "item.label.Tip": {
+    "message": "Tip",
+    "description": "Navbar item with label Tip"
   }
 }
