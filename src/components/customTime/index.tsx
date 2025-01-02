@@ -7,6 +7,7 @@ export default function GenerateCustomTime(): JSX.Element {
   const [isSunny, setIsSunny] = useState(true);
   const [isDown, setIsDown] = useState(false);
   const [isStroke, setIsStroke] = useState(false);
+  const [isWhite, setIsWhite] = useState(false);
   const [rangeStroke, setRangeStroke] = useState(2);
   const [uriName, setUriName] = useState<string>(
     "https://feelsunnyman.github.io/tools/timer/"
@@ -18,6 +19,10 @@ export default function GenerateCustomTime(): JSX.Element {
 
   const handleCreatedTime = (createdAt: string) => {
     setcreatedAt(createdAt);
+  };
+
+  const updateWhite = () => {
+    setIsWhite(!isWhite);
   };
 
   const updateUrl = (newIsSunny: boolean, newIsDown: boolean) => {
@@ -46,7 +51,6 @@ export default function GenerateCustomTime(): JSX.Element {
     setRangeStroke(e.target.value);
     setIsStroke(e.target.value != 2);
   };
-
 
   const changeDown = () => {
     const toggledDown = !isDown;
@@ -106,7 +110,9 @@ export default function GenerateCustomTime(): JSX.Element {
                   >
                     <span className="token plain resp_copy">
                       {uriName}?time=
-                      <strong>{createdAt}</strong>{isStroke ? `&stroke=${rangeStroke}` : ""}
+                      <strong>{createdAt}</strong>
+                      {isStroke ? `&stroke=${rangeStroke}` : ""}
+                      {isWhite ? `&white=${isWhite}` : ""}
                     </span>
                     <button
                       className="copy-button"
@@ -136,41 +142,59 @@ export default function GenerateCustomTime(): JSX.Element {
                   ⬇️?
                 </label>
               </div>
-                <div className="SunCheck">
-                  <label
-                    htmlFor="feelSunny"
+              <div className="SunCheck">
+                <label
+                  htmlFor="feelSunny"
+                  title="Feelng Sunny?"
+                  className="radioBtn"
+                >
+                  <input
                     title="Feelng Sunny?"
-                    className="radioBtn"
-                  >
-                    <input
-                      title="Feelng Sunny?"
-                      type="checkbox"
-                      id="feelSunny"
-                      className="radioAction"
-                      defaultChecked={isSunny}
-                      onClick={changeUrl}
-                    />
-                    ☀️?
-                  </label>
-                </div>
-                <div className="setOutline">
-                  <label
-                    htmlFor="outlineStroke"
-                    title="Change Stroke outline"
-                    className="radioBtn"
-                  >
-                    Text Outline: {rangeStroke}
-                    <input
-                      title="Feelng Sunny?"
-                      type="range"
-                      id="outlineStroke"
-                      value={rangeStroke}
-                      min={1}
-                      max={10}
-                      step={1}
-                      onChange={updateStroke}
-                    />
-                  </label>
+                    type="checkbox"
+                    id="feelSunny"
+                    className="radioAction"
+                    defaultChecked={isSunny}
+                    onClick={changeUrl}
+                  />
+                  ☀️?
+                </label>
+              </div>
+              <div className="setOutline">
+                <label
+                  htmlFor="outlineStroke"
+                  title="Change Stroke outline"
+                  className="radioBtn"
+                >
+                  Text Outline: {rangeStroke}
+                  <input
+                    title="Feelng Sunny?"
+                    type="range"
+                    id="outlineStroke"
+                    value={rangeStroke}
+                    min={1}
+                    max={10}
+                    step={1}
+                    onChange={updateStroke}
+                  />
+                </label>
+              </div>
+
+              <div className="setWhite">
+                <label
+                  htmlFor="allWhite"
+                  title="Add text Shadow"
+                  className="radioBtn"
+                >
+                  White Text Mode
+                  <input
+                    title="Feelng Sunny?"
+                    type="checkbox"
+                    id="allWhite"
+                    className="radioAction"
+                    defaultChecked={isWhite}
+                    onClick={updateWhite}
+                  />
+                </label>
               </div>
             </div>
             <TimeSelector onCreatedAt={handleCreatedTime} />
@@ -181,7 +205,9 @@ export default function GenerateCustomTime(): JSX.Element {
             <div className="ifame-display">
               <iframe
                 id="scaled-frame"
-                src={`${uriName}?time=${createdAt}${isStroke ? `&stroke=${rangeStroke}` : ""}`}
+                src={`${uriName}?time=${createdAt}${
+                  isStroke ? `&stroke=${rangeStroke}` : ""
+                }${isWhite ? `&white=${isWhite}` : ""}`}
               ></iframe>
             </div>
           </div>

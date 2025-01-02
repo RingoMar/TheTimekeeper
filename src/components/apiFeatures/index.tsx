@@ -11,6 +11,7 @@ export default function APICallWebsite(): JSX.Element {
   const [output, setOutput] = useState("");
   const [isSunny, setIsSunny] = useState(true);
   const [isStroke, setIsStroke] = useState(false);
+  const [isWhite, setIsWhite] = useState(false);
   const [rangeStroke, setRangeStroke] = useState(2);
   const [uriName, setUriName] = useState<string>(
     "https://feelsunnyman.github.io/tools/timer/"
@@ -29,6 +30,10 @@ export default function APICallWebsite(): JSX.Element {
     } else {
       return null;
     }
+  };
+
+  const updateWhite = () => {
+    setIsWhite(!isWhite);
   };
 
   const changeUrl = () => {
@@ -51,8 +56,10 @@ export default function APICallWebsite(): JSX.Element {
         throw new Error("No time");
       }
       let addStroke = isStroke ? `&stroke=${rangeStroke}` : "";
+      let addWhite = isWhite ? `&white=${isWhite}` : "";
+
       navigator.clipboard
-        .writeText(`${uriName}?time=${createdAt}${addStroke}`)
+        .writeText(`${uriName}?time=${createdAt}${addStroke}${addWhite}`)
         .then(() => {
           console.log("Text copied to clipboard:", createdAt);
           setcopyButton("Copied!");
@@ -238,6 +245,24 @@ export default function APICallWebsite(): JSX.Element {
                         />
                       </label>
                     </div>
+
+                    <div className="setWhite">
+                      <label
+                        htmlFor="allWhite"
+                        title="Add text Shadow"
+                        className="radioBtn"
+                      >
+                        White Text Mode
+                        <input
+                          title="Feelng Sunny?"
+                          type="checkbox"
+                          id="allWhite"
+                          className="radioAction"
+                          defaultChecked={isWhite}
+                          onClick={updateWhite}
+                        />
+                      </label>
+                    </div>
                   </div>
                 </div>
                 <div className="codeBlockContent_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module outputLayer time-container-preview">
@@ -256,7 +281,9 @@ export default function APICallWebsite(): JSX.Element {
                       >
                         <span className="token plain resp_copy">
                           {uriName}?time=
-                          <strong>{createdAt}</strong>{isStroke ? `&stroke=${rangeStroke}` : ""}
+                          <strong>{createdAt}</strong>
+                          {isStroke ? `&stroke=${rangeStroke}` : ""}
+                          {isWhite ? `&white=${isWhite}` : ""}
                         </span>
                         <button
                           className="copy-button"
