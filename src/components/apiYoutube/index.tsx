@@ -4,9 +4,35 @@ import ExpandableText from "./resources/ExpandableText";
 import "./styles.api.css";
 import CopyIcon from "./copy";
 
-export default function APICallWebsite(): JSX.Element {
+interface YTliveStreamingDetails {
+  actualStartTime: string;
+  scheduledStartTime: string;
+  concurrentViewers: string;
+  activeLiveChatId: string;
+}
+
+interface YTitems {
+  kind: string;
+  etag: string;
+  id: string;
+  liveStreamingDetails?: YTliveStreamingDetails;
+}
+
+interface PageInfo {
+  totalResults: number;
+  resultsPerPage: number;
+}
+
+interface YTapi {
+  kind: string;
+  etag: string;
+  items: YTitems[];
+  pageInfo: PageInfo;
+}
+
+export default function APIYTCallWebsite({ yt_key }): JSX.Element {
   const [showTooltip, setShowTooltip] = useState(false);
-  const [CHANNEL_NAME, SETCHANNEL_NAME] = useState("");
+  const [CHANNEL_LINK, SETCHANNEL_LINK] = useState("");
   const [VIDEO_ID, SETVIDEO_ID] = useState("");
   const [output, setOutput] = useState("");
   const [isSunny, setIsSunny] = useState(true);
@@ -22,14 +48,10 @@ export default function APICallWebsite(): JSX.Element {
   );
 
   const extractVideoId = (url: any) => {
-    const parts = url.split("/");
-    const lastPartWithQuery = parts[parts.length - 1];
-    const lastPart = lastPartWithQuery.split("?")[0];
-    if (!isNaN(lastPart)) {
-      return lastPart;
-    } else {
-      return null;
-    }
+    var regExp =
+      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    var match = url.match(regExp);
+    return match && match[7].length == 11 ? match[7] : null;
   };
 
   const updateWhite = () => {
@@ -79,78 +101,31 @@ export default function APICallWebsite(): JSX.Element {
     }, 1700);
   };
 
-  const checkLive = async () => {
-    try {
-      let gqlQuery = {
-        operationName: "UseLive",
-        query:
-          "query UseLive($channelLogin: String!) { user(login: $channelLogin) { id login stream { id createdAt __typename } __typename  }}",
-        variables: {
-          channelLogin: CHANNEL_NAME.toLowerCase(),
-        },
-      };
-
-      const response = await fetch("https://gql.twitch.tv/gql", {
-        method: "post",
-        headers: {
-          "client-id": "kimne78kx3ncx6brgo4mv6wki5h1ko",
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(gqlQuery),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const streamlive = await response.json();
-      console.log(streamlive);
-      // Check if the video property is null
-      if (streamlive.data.user.stream === null) {
-        throw new Error("Bad request: Channel Not live!");
-      }
-      setcreatedAt(streamlive.data.user.stream.createdAt);
-      setOutput(JSON.stringify(streamlive, null, 2));
-    } catch (error) {
-      console.error("Error:", error);
-      setOutput("Error occurred. Please try again. " + error);
-    }
-  };
-
   const makeAPICall = async () => {
     try {
-      let gqlQuery = {
-        operationName: "VideoMetadata",
-        query:
-          "query VideoMetadata($channelLogin: String!, $videoID: ID!) {  user(login: $channelLogin) { id primaryColorHex isPartner profileImageURL(width: 70) lastBroadcast { id startedAt __typename } __typename }  currentUser { id __typename } video(id: $videoID) {   id title description previewThumbnailURL(height: 60, width: 90) createdAt viewCount publishedAt lengthSeconds broadcastType owner { id login displayName __typename } game { id slug boxArtURL name displayName __typename }  __typename }}",
-        variables: {
-          channelLogin: CHANNEL_NAME.toLowerCase(),
-          videoID: extractVideoId(VIDEO_ID),
-        },
-      };
-
-      const response = await fetch("https://gql.twitch.tv/gql", {
-        method: "post",
-        headers: {
-          "client-id": "kimne78kx3ncx6brgo4mv6wki5h1ko",
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(gqlQuery),
-      });
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${extractVideoId(
+          CHANNEL_LINK
+        )}&key=${yt_key}`,
+        {
+          method: "get",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const VideoMetadata = await response.json();
-
+      const VideoMetadata: YTapi = await response.json();
       // Check if the video property is null
-      if (VideoMetadata.data?.video === null) {
-        throw new Error("Bad request: No video found");
+      if (VideoMetadata.items[0].liveStreamingDetails == null) {
+        throw new Error("Bad request: Not a live stream");
       }
-      setcreatedAt(VideoMetadata.data.video.createdAt);
+      setcreatedAt(VideoMetadata.items[0].liveStreamingDetails.actualStartTime);
       setOutput(JSON.stringify(VideoMetadata, null, 2));
     } catch (error) {
       console.error("Error:", error);
@@ -158,29 +133,22 @@ export default function APICallWebsite(): JSX.Element {
     }
   };
 
-  const handleKeyDownLive = (event: { key: string }) => {
-    if (event.key === "Enter") {
-      checkLive();
-    }
-  };
-
   const handleKeyDownVod = (event: { key: string }) => {
     if (event.key === "Enter") {
-      checkLive();
+      makeAPICall();
     }
   };
 
   return (
-    <div className="container container-api">
-      <h1>Retrieve Stream Start Time</h1>
+    <div className="container-api">
+      <h1>Retrieve Youtube Stream Start Time</h1>
       <p>
-        This page enables you to fetch information about a Twitch stream, like
+        This page enables you to fetch information about a Youtube stream, like
         its start time and other details, using an API call. You just need to
-        provide the <strong className="apistrong">channel name</strong> and the{" "}
-        <strong className="apistrong">video ID</strong>, and it will handle the
-        rest.
+        provide the <strong className="apistrong">Youtube Link</strong>, and it
+        will handle the rest.
       </p>
-      <div className="apiContent">
+      <div className="ytapiContent">
         <div className="callcenter">
           <h3>CREATE URL</h3>
           <div className="create-time">
@@ -188,26 +156,9 @@ export default function APICallWebsite(): JSX.Element {
               <div className={`customTime`}>
                 <div className="infoTwitch time-container-preview">
                   <h3>
-                    Use Twitch's GraphQL API to retrieve the precise time in UTC
-                    seconds.
+                    Useing Youtube's Api 3 to retrieve the precise start time in
+                    UTC.
                   </h3>
-                  <small className="highlight">
-                    *Use the{" "}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#F5FAD5"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                    </svg>{" "}
-                    to fetch the current live stream{" "}
-                  </small>
                   <div className="flex-box">
                     <div className="SunCheck">
                       <label
@@ -297,52 +248,23 @@ export default function APICallWebsite(): JSX.Element {
                 </div>
 
                 <div className="time-container-preview">
+                  
                   <div className="fetch-vod">
                     <FloatingLabelInput
-                      label="TWITCH USER NAME"
-                      value={CHANNEL_NAME}
-                      onChange={SETCHANNEL_NAME}
-                      handleKeyDown={handleKeyDownLive}
+                      label="Live Youtube Link or Video ID"
+                      value={CHANNEL_LINK}
+                      onChange={SETCHANNEL_LINK}
+                      handleKeyDown={handleKeyDownVod}
                     />
-                    <div className="fetch-button">
-                      <button
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                        onClick={checkLive}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="25"
-                          height="25"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="#F5FAD5"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                        </svg>
-                      </button>
-                      {showTooltip && (
-                        <div className="fetch-tool-tip">Fetch current vod</div>
-                      )}
-                    </div>
                   </div>
-                  <FloatingLabelInput
-                    label="VOD LINK"
-                    value={VIDEO_ID}
-                    onChange={SETVIDEO_ID}
-                    handleKeyDown={handleKeyDownVod}
-                  />
 
                   <div className="smtBtn">
                     <button
                       className="submitButton"
                       onClick={makeAPICall}
-                      disabled={!(VIDEO_ID && CHANNEL_NAME)}
+                      disabled={!CHANNEL_LINK}
                     >
-                      Load Stream Data
+                      Load Youtube Data
                     </button>
                   </div>
                 </div>
@@ -350,7 +272,7 @@ export default function APICallWebsite(): JSX.Element {
             </div>
           </div>
         </div>
-        <div className="debugContain">
+        <div className="ytdebugContain">
           <h3>RAW OUTPUT</h3>
           <pre>
             <ExpandableText text={output} maxLength={200} />

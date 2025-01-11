@@ -1,6 +1,7 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import 'dotenv/config';
 
 const config: Config = {
   title: "The Timekeeper",
@@ -20,13 +21,22 @@ const config: Config = {
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
+  customFields: {
+    // Put your custom environment here
+    yt_key: process.env.REACT_APP_YT_KEY,
+  },
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: "en",
-    locales: ["en"],
+    locales: ["en", "fr", "fa", "de", "sa", "fn"],
+    localeConfigs: {
+      en: {
+        htmlLang: "en-GB",
+      },
+    },
   },
 
   presets: [
@@ -35,7 +45,7 @@ const config: Config = {
       {
         gtag: {
           trackingID: "G-0GS2KLZXCG",
-          anonymizeIP: false,
+          anonymizeIP: true,
         },
         docs: {
           sidebarPath: "./sidebars.ts",
@@ -82,13 +92,19 @@ const config: Config = {
           label: "Broadcast API",
         },
         {
+          to: "/yt-api",
+          sidebarid: "apiSidebar",
+          position: "left",
+          label: "Youtube API",
+        },
+        {
           to: "/custom",
           sidebarid: "customSidebar",
           position: "left",
           label: "Custom Time",
         },
         {
-          href: "https://github.com/RingoMar/TheTimekeeper",
+          href: "https://github.com/FeelSunnyMan/tools",
           label: "Project",
           position: "right",
         },
@@ -106,20 +122,8 @@ const config: Config = {
           title: "Links",
           items: [
             {
-              label: "Websites",
-              href: "https://ringomar.github.io/",
-            },
-            {
-              label: "Twitter",
-              href: "https://twitter.com/_ringomar",
-            },
-            {
               label: "RingoMar",
               href: "https://github.com/RingoMar",
-            },
-            {
-              label: "Photos",
-              href: "https://unsplash.com/@ringomar",
             },
           ],
         },
