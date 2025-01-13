@@ -31,9 +31,7 @@ interface YTapi {
 }
 
 export default function APIYTCallWebsite({ yt_key }): JSX.Element {
-  const [showTooltip, setShowTooltip] = useState(false);
   const [CHANNEL_LINK, SETCHANNEL_LINK] = useState("");
-  const [VIDEO_ID, SETVIDEO_ID] = useState("");
   const [output, setOutput] = useState("");
   const [isSunny, setIsSunny] = useState(true);
   const [isStroke, setIsStroke] = useState(false);
@@ -46,13 +44,6 @@ export default function APIYTCallWebsite({ yt_key }): JSX.Element {
   const [copyButton, setcopyButton] = useState<string | ReactNode>(
     <CopyIcon />
   );
-
-  const extractVideoId = (url: any) => {
-    var regExp =
-      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    var match = url.match(regExp);
-    return match && match[7].length == 11 ? match[7] : null;
-  };
 
   const updateWhite = () => {
     setIsWhite(!isWhite);
@@ -104,12 +95,11 @@ export default function APIYTCallWebsite({ yt_key }): JSX.Element {
   const makeAPICall = async () => {
     try {
       const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${extractVideoId(
-          CHANNEL_LINK
-        )}&key=${yt_key}`,
+        `https://gomar.vercel.app/youtubelive`,
         {
-          method: "get",
+          method: "post",
           headers: {
+            "stream": CHANNEL_LINK,
             Accept: "application/json",
             "Content-Type": "application/json",
           },
@@ -119,12 +109,8 @@ export default function APIYTCallWebsite({ yt_key }): JSX.Element {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
+      
       const VideoMetadata: YTapi = await response.json();
-      // Check if the video property is null
-      if (VideoMetadata.items[0].liveStreamingDetails == null) {
-        throw new Error("Bad request: Not a live stream");
-      }
       setcreatedAt(VideoMetadata.items[0].liveStreamingDetails.actualStartTime);
       setOutput(JSON.stringify(VideoMetadata, null, 2));
     } catch (error) {
