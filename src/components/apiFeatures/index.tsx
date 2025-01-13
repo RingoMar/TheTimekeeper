@@ -21,17 +21,6 @@ export default function APICallWebsite(): JSX.Element {
     <CopyIcon />
   );
 
-  const extractVideoId = (url: any) => {
-    const parts = url.split("/");
-    const lastPartWithQuery = parts[parts.length - 1];
-    const lastPart = lastPartWithQuery.split("?")[0];
-    if (!isNaN(lastPart)) {
-      return lastPart;
-    } else {
-      return null;
-    }
-  };
-
   const updateWhite = () => {
     setIsWhite(!isWhite);
   };
@@ -81,24 +70,16 @@ export default function APICallWebsite(): JSX.Element {
 
   const checkLive = async () => {
     try {
-      let gqlQuery = {
-        operationName: "UseLive",
-        query:
-          "query UseLive($channelLogin: String!) { user(login: $channelLogin) { id login stream { id createdAt __typename } __typename  }}",
-        variables: {
-          channelLogin: CHANNEL_NAME.toLowerCase(),
-        },
-      };
-
-      const response = await fetch("https://gql.twitch.tv/gql", {
+      const response = await fetch(`https://gomar.vercel.app/broadcastlive`, {
         method: "post",
         headers: {
-          "client-id": "kimne78kx3ncx6brgo4mv6wki5h1ko",
           Accept: "application/json",
           "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "https://ringomar.github.io",
         },
-        body: JSON.stringify(gqlQuery),
+        body: JSON.stringify({ channelname: CHANNEL_NAME }),
       });
+
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -114,30 +95,20 @@ export default function APICallWebsite(): JSX.Element {
       setOutput(JSON.stringify(streamlive, null, 2));
     } catch (error) {
       console.error("Error:", error);
-      setOutput("Error occurred. Please try again. " + error);
+      setOutput("Error occurred. Please try again.");
     }
   };
 
   const makeAPICall = async () => {
     try {
-      let gqlQuery = {
-        operationName: "VideoMetadata",
-        query:
-          "query VideoMetadata($channelLogin: String!, $videoID: ID!) {  user(login: $channelLogin) { id primaryColorHex isPartner profileImageURL(width: 70) lastBroadcast { id startedAt __typename } __typename }  currentUser { id __typename } video(id: $videoID) {   id title description previewThumbnailURL(height: 60, width: 90) createdAt viewCount publishedAt lengthSeconds broadcastType owner { id login displayName __typename } game { id slug boxArtURL name displayName __typename }  __typename }}",
-        variables: {
-          channelLogin: CHANNEL_NAME.toLowerCase(),
-          videoID: extractVideoId(VIDEO_ID),
-        },
-      };
-
-      const response = await fetch("https://gql.twitch.tv/gql", {
+      const response = await fetch(`https://gomar.vercel.app/broadcast`, {
         method: "post",
         headers: {
-          "client-id": "kimne78kx3ncx6brgo4mv6wki5h1ko",
           Accept: "application/json",
           "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "https://ringomar.github.io",
         },
-        body: JSON.stringify(gqlQuery),
+        body: JSON.stringify({ channelname: CHANNEL_NAME, videoid: VIDEO_ID }),
       });
 
       if (!response.ok) {
@@ -154,7 +125,7 @@ export default function APICallWebsite(): JSX.Element {
       setOutput(JSON.stringify(VideoMetadata, null, 2));
     } catch (error) {
       console.error("Error:", error);
-      setOutput("Error occurred. Please try again. " + error);
+      setOutput("Error occurred. Please try again.");
     }
   };
 

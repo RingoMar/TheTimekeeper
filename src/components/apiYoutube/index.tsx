@@ -28,6 +28,7 @@ interface YTapi {
   etag: string;
   items: YTitems[];
   pageInfo: PageInfo;
+  error?: string
 }
 
 export default function APIYTCallWebsite({ yt_key }): JSX.Element {
@@ -94,28 +95,26 @@ export default function APIYTCallWebsite({ yt_key }): JSX.Element {
 
   const makeAPICall = async () => {
     try {
-      const response = await fetch(
-        `https://gomar.vercel.app/youtubelive`,
-        {
-          method: "post",
-          headers: {
-            "stream": CHANNEL_LINK,
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`https://gomar.vercel.app/youtubelive`, {
+        method: "post",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "https://ringomar.github.io",
+        },
+        body: JSON.stringify({ stream: CHANNEL_LINK }),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
+
       const VideoMetadata: YTapi = await response.json();
       setcreatedAt(VideoMetadata.items[0].liveStreamingDetails.actualStartTime);
       setOutput(JSON.stringify(VideoMetadata, null, 2));
     } catch (error) {
       console.error("Error:", error);
-      setOutput("Error occurred. Please try again. " + error);
+      setOutput("Error occurred. Link might not be a live stream, Please try again.");
     }
   };
 
@@ -234,7 +233,6 @@ export default function APIYTCallWebsite({ yt_key }): JSX.Element {
                 </div>
 
                 <div className="time-container-preview">
-                  
                   <div className="fetch-vod">
                     <FloatingLabelInput
                       label="Live Youtube Link or Video ID"
