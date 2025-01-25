@@ -1,6 +1,7 @@
 .floating-label-input {
     position: relative;
     margin-top: 20px;
+    transition: all .2s ease-in-out;
 }
 
 .floating-label-input input {
@@ -14,7 +15,7 @@
 }
 
 .floating-label-input input:focus {
-    border-color: #ff5656;
+    border-color: #F995D9;
 }
 
 .floating-label-input .floating-label {
@@ -32,7 +33,7 @@
     top: -8px;
     left: 8px;
     font-size: 12px;
-    background-color: #ff5656;
+    background-color: #F995D9;
     color: #fff;
 }
 
@@ -59,8 +60,8 @@
 .fetch-vod button {
     margin-top: 20px;
     border-radius: 0px 4px 4px 0px !important;
-    background-color: #DF6037;
-    border: 1px solid #de6e48;
+    background-color: rgb(212 162 221 / 70%);
+    border: 1px solid #8d399c;
     cursor: pointer;
     display: flex;
     height: calc(100% - 20px);

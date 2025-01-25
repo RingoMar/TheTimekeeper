@@ -7,6 +7,10 @@
     "message": "Donate",
     "description": "The title of the footer links column with title=Donate in the footer"
   },
+  "link.title.Legal": {
+    "message": "Legal",
+    "description": "The title of the footer links column with title=Legal in the footer"
+  },
   "link.item.label.RingoMar": {
     "message": "RingoMar",
     "description": "The label of footer link with label=RingoMar linking to https://github.com/RingoMar"
@@ -15,8 +19,12 @@
     "message": "Support Me on Ko-fi",
     "description": "The label of footer link with label=Support Me on Ko-fi linking to https://ko-fi.com/ringomar"
   },
+  "link.item.label.Privacy": {
+    "message": "Privacy",
+    "description": "The label of footer link with label=Privacy linking to https://ringomar.github.io/policy"
+  },
   "copyright": {
-    "message": "Copyright © 2025 RingoMar. This website is not affiliated with Twitch Interactive Inc.",
+    "message": "Copyright © 2025 RingoMar. This website is not affiliated or endorsed by Twitch Interactive Inc., Google or YouTube.",
     "description": "The footer copyright"
   }
 }

@@ -1,29 +1,34 @@
 import React, { ReactNode, useState } from "react";
+import clsx from "clsx";
+import Link from "@docusaurus/Link";
+import CopyIcon from "../assets/copy";
+import styles from "./api.module.css";
+import Settings from "../assets/settings";
+import ApiCloud from "../assets/api";
+import HelpCircle from "../assets/HelpCircle";
 import FloatingLabelInput from "./resources/FloatingLabelInput";
-import ExpandableText from "./resources/ExpandableText";
-import "./styles.api.css";
-import CopyIcon from "./copy";
 
 export default function APICallWebsite(): JSX.Element {
   const [showTooltip, setShowTooltip] = useState(false);
   const [CHANNEL_NAME, SETCHANNEL_NAME] = useState("");
   const [VIDEO_ID, SETVIDEO_ID] = useState("");
-  const [output, setOutput] = useState("");
   const [isSunny, setIsSunny] = useState(true);
-  const [isStroke, setIsStroke] = useState(false);
   const [isWhite, setIsWhite] = useState(false);
   const [rangeStroke, setRangeStroke] = useState(2);
+  const [error, setError] = useState("");
+  const [updated, setUpdated] = useState(false);
   const [uriName, setUriName] = useState<string>(
     "https://feelsunnyman.github.io/tools/timer/"
   );
   const [createdAt, setcreatedAt] = useState("");
+  const [timeParms, setTimeParms] = useState({
+    time: null,
+    stroke: null,
+    white: false,
+  });
   const [copyButton, setcopyButton] = useState<string | ReactNode>(
     <CopyIcon />
   );
-
-  const updateWhite = () => {
-    setIsWhite(!isWhite);
-  };
 
   const changeUrl = () => {
     setIsSunny(!isSunny);
@@ -35,20 +40,54 @@ export default function APICallWebsite(): JSX.Element {
   };
 
   const updateStroke = (e) => {
-    setRangeStroke(e.target.value);
-    setIsStroke(e.target.value != 2);
+    if (e.target.value === "2") {
+      setTimeParms((prevtimeParms) => ({ ...prevtimeParms, stroke: null }));
+      setRangeStroke(e.target.value);
+    } else {
+      setRangeStroke(e.target.value);
+      setTimeParms((prevtimeParms) => ({
+        ...prevtimeParms,
+        stroke: e.target.value,
+      }));
+    }
   };
 
+  const updateWhite = () => {
+    setTimeParms((prevtimeParms) => ({ ...prevtimeParms, white: !isWhite }));
+    setIsWhite(!isWhite);
+  };
+
+  /**
+   * Using a URL object
+   * A dynamic way to upgrade a URL or downgrade using a mull value
+   * if the value is false it will be ignored / removed
+   * @returns {string} The url as a string
+   */
+  function updateUrl(): string {
+    const url = new URL(uriName);
+
+    for (const key in timeParms) {
+      if (timeParms[key] === null || timeParms[key] === false) {
+        url.searchParams.delete(key);
+      } else {
+        url.searchParams.set(key, timeParms[key]);
+      }
+    }
+
+    return url.toString();
+  }
+
   const copyToClipboard = () => {
+    console.log("copy");
+
     try {
       if (!createdAt) {
         throw new Error("No time");
       }
-      let addStroke = isStroke ? `&stroke=${rangeStroke}` : "";
-      let addWhite = isWhite ? `&white=${isWhite}` : "";
-
+      const timerURL: string = updateUrl();
+      console.log(timerURL);
       navigator.clipboard
-        .writeText(`${uriName}?time=${createdAt}${addStroke}${addWhite}`)
+        .writeText(`${timerURL}`)
         .then(() => {
           console.log("Text copied to clipboard:", createdAt);
           setcopyButton("Copied!");
@@ -60,15 +99,19 @@ export default function APICallWebsite(): JSX.Element {
           throw new Error(error);
         });
     } catch (error) {
-      setcopyButton(error);
+      console.log("Copy error:", error);
+      setcopyButton("Error");
     }
 
     setTimeout(() => {
       setcopyButton(<CopyIcon />);
-    }, 1700);
+    }, 600);
   };
 
   const checkLive = async () => {
+    if (!CHANNEL_NAME) {
+      return;
+    }
     try {
       const response = await fetch(`https://gomar.vercel.app/broadcastlive`, {
         method: "post",
@@ -80,23 +123,31 @@ export default function APICallWebsite(): JSX.Element {
         body: JSON.stringify({ channelname: CHANNEL_NAME }),
       });
 
-
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`API Error: ${response.status}`);
       }
 
       const streamlive = await response.json();
-      console.log(streamlive);
-      // Check if the video property is null
       if (streamlive.data.user.stream === null) {
         throw new Error("Bad request: Channel Not live!");
       }
+
+      setUpdated(true);
+      setTimeParms((prevtimeParms) => ({
+        ...prevtimeParms,
+        time: streamlive.data.user.stream.createdAt,
+      }));
       setcreatedAt(streamlive.data.user.stream.createdAt);
-      setOutput(JSON.stringify(streamlive, null, 2));
+      console.log(JSON.stringify(streamlive, null, 2));
+      setError("");
     } catch (error) {
       console.error("Error:", error);
-      setOutput("Error occurred. Please try again.");
+      setError("Error occurred. Channel may not be live!");
     }
+
+    setTimeout(() => {
+      setUpdated(false);
+    }, 600);
   };
 
   const makeAPICall = async () => {
@@ -112,7 +163,7 @@ export default function APICallWebsite(): JSX.Element {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`API ERROR: ${response.status}`);
       }
 
       const VideoMetadata = await response.json();
@@ -121,12 +172,22 @@ export default function APICallWebsite(): JSX.Element {
       if (VideoMetadata.data?.video === null) {
         throw new Error("Bad request: No video found");
       }
+      setUpdated(true);
+      setTimeParms((prevtimeParms) => ({
+        ...prevtimeParms,
+        time: VideoMetadata.data.video.createdAt,
+      }));
       setcreatedAt(VideoMetadata.data.video.createdAt);
-      setOutput(JSON.stringify(VideoMetadata, null, 2));
+      console.log(JSON.stringify(VideoMetadata, null, 2));
+      setError("");
     } catch (error) {
       console.error("Error:", error);
-      setOutput("Error occurred. Please try again.");
+      setError("Error occurred. Unable to get channel data.");
     }
+
+    setTimeout(() => {
+      setUpdated(false);
+    }, 600);
   };
 
   const handleKeyDownLive = (event: { key: string }) => {
@@ -142,27 +203,53 @@ export default function APICallWebsite(): JSX.Element {
   };
 
   return (
-    <div className="container container-api">
-      <h1>Retrieve Stream Start Time</h1>
-      <p>
-        This page enables you to fetch information about a Twitch stream, like
-        its start time and other details, using an API call. You just need to
-        provide the <strong className="apistrong">channel name</strong> and the{" "}
-        <strong className="apistrong">video ID</strong>, and it will handle the
-        rest.
-      </p>
-      <div className="apiContent">
-        <div className="callcenter">
-          <h3>CREATE URL</h3>
-          <div className="create-time">
-            <div className="create-container">
-              <div className={`customTime`}>
-                <div className="infoTwitch time-container-preview">
-                  <h3>
-                    Use Twitch's GraphQL API to retrieve the precise time in UTC
-                    seconds.
-                  </h3>
-                  <small className="highlight">
+    <div className={clsx(styles.container)}>
+      <div className={clsx(styles.APIcontainer)}>
+        <div className={clsx("header-info", styles.copyClass)}>
+          <div className={clsx(styles.headerIntro)}>
+            <small>Twitch API Portal</small>
+            <h3>
+              Easily retrieve and display stream or VOD start times for Twitch
+              below. Enter the Twitch username or VOD link, customize the timer
+              settings, and copy the generated OBS browser source link.
+            </h3>
+          </div>
+        </div>
+        <div className={clsx("url-copy", styles.copyClass)}>
+          <div className={styles.copyHelp}>
+            <h3>OBS BROWER SOURCE LINK</h3>
+
+            <Link to="/docs/obs-tutorial/bs">
+              <div className={clsx(styles.urlHeader)}>
+                <HelpCircle />
+                <h3>HOW TO USE</h3>
+              </div>
+            </Link>
+          </div>
+          <div className={clsx("url-copy", styles.copyContainer)}>
+            <span
+              className={`${updated ? styles.flashText : ""} ${
+                styles.ApiToken
+              }`}
+            >
+              {updateUrl()}
+            </span>
+            <button
+              className={styles.copybtn}
+              onClick={() => copyToClipboard()}
+            >
+              {copyButton}
+            </button>
+          </div>
+        </div>
+        <div className={clsx(styles.configContainer)}>
+          <div className={clsx(styles.configCard)}>
+            <div className={clsx(styles.configHeader)}>
+              <ApiCloud />
+              <h3>Twitch API</h3>
+            </div>
+            
+            <small className="highlight">
                     *Use the{" "}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -170,7 +257,7 @@ export default function APICallWebsite(): JSX.Element {
                       height="12"
                       viewBox="0 0 24 24"
                       fill="none"
-                      stroke="#F5FAD5"
+                      stroke="currentColor"
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -179,153 +266,122 @@ export default function APICallWebsite(): JSX.Element {
                     </svg>{" "}
                     to fetch the current live stream{" "}
                   </small>
-                  <div className="flex-box">
-                    <div className="SunCheck">
-                      <label
-                        htmlFor="feelSunny"
-                        title="Feelng Sunny?"
-                        className="radioBtn"
-                      >
-                        <input
-                          title="Feelng Sunny?"
-                          type="checkbox"
-                          id="feelSunny"
-                          className="radioAction"
-                          defaultChecked={isSunny}
-                          onClick={changeUrl}
-                        />
-                        ☀️?
-                      </label>
-                    </div>
-                    <div className="setOutline">
-                      <label
-                        htmlFor="outlineStroke"
-                        title="Change Stroke outline"
-                        className="radioBtn"
-                      >
-                        Text Outline: {rangeStroke}
-                        <input
-                          title="Feelng Sunny?"
-                          type="range"
-                          id="outlineStroke"
-                          value={rangeStroke}
-                          min={1}
-                          max={10}
-                          step={1}
-                          onChange={updateStroke}
-                        />
-                      </label>
-                    </div>
-
-                    <div className="setWhite">
-                      <label
-                        htmlFor="allWhite"
-                        title="Add text Shadow"
-                        className="radioBtn"
-                      >
-                        White Text Mode
-                        <input
-                          title="Feelng Sunny?"
-                          type="checkbox"
-                          id="allWhite"
-                          className="radioAction"
-                          defaultChecked={isWhite}
-                          onClick={updateWhite}
-                        />
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div className="codeBlockContent_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module outputLayer time-container-preview">
-                  <pre
-                    className="prism-code language-text codeBlock_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module thin-scrollbar"
-                    style={{
-                      color: "rgb(248, 248, 242)",
-                      backgroundColor: "rgb(40, 42, 54)",
-                      width: "100%",
-                    }}
+            <div className="time-container-preview">
+              <div className="fetch-vod">
+                <FloatingLabelInput
+                  label="TWITCH USER NAME"
+                  value={CHANNEL_NAME}
+                  onChange={SETCHANNEL_NAME}
+                  handleKeyDown={handleKeyDownLive}
+                />
+                <div className="fetch-button">
+                  <button
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                    onClick={checkLive}
                   >
-                    <code className="codeBlockLines_node_modules-@docusaurus-theme-classic-lib-theme-CodeBlock-Content-styles-module">
-                      <span
-                        className="token-line copy-container"
-                        style={{ color: "rgb(248, 248, 242)" }}
-                      >
-                        <span className="token plain resp_copy">
-                          {uriName}?time=
-                          <strong>{createdAt}</strong>
-                          {isStroke ? `&stroke=${rangeStroke}` : ""}
-                          {isWhite ? `&white=${isWhite}` : ""}
-                        </span>
-                        <button
-                          className="copy-button"
-                          onClick={() => copyToClipboard()}
-                        >
-                          {copyButton}
-                        </button>
-                      </span>
-                    </code>
-                  </pre>
-                </div>
-
-                <div className="time-container-preview">
-                  <div className="fetch-vod">
-                    <FloatingLabelInput
-                      label="TWITCH USER NAME"
-                      value={CHANNEL_NAME}
-                      onChange={SETCHANNEL_NAME}
-                      handleKeyDown={handleKeyDownLive}
-                    />
-                    <div className="fetch-button">
-                      <button
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                        onClick={checkLive}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="25"
-                          height="25"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="#F5FAD5"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                        </svg>
-                      </button>
-                      {showTooltip && (
-                        <div className="fetch-tool-tip">Fetch current vod</div>
-                      )}
-                    </div>
-                  </div>
-                  <FloatingLabelInput
-                    label="VOD LINK"
-                    value={VIDEO_ID}
-                    onChange={SETVIDEO_ID}
-                    handleKeyDown={handleKeyDownVod}
-                  />
-
-                  <div className="smtBtn">
-                    <button
-                      className="submitButton"
-                      onClick={makeAPICall}
-                      disabled={!(VIDEO_ID && CHANNEL_NAME)}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="25"
+                      height="25"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#F5FAD5"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
-                      Load Stream Data
-                    </button>
-                  </div>
+                      <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                    </svg>
+                  </button>
+                  {showTooltip && (
+                    <div className="fetch-tool-tip">Fetch current vod</div>
+                  )}
                 </div>
               </div>
+              <FloatingLabelInput
+                label="VOD LINK"
+                value={VIDEO_ID}
+                onChange={SETVIDEO_ID}
+                handleKeyDown={handleKeyDownVod}
+              />
+
+              <div className={styles.smtBtn}>
+                <button
+                  className={styles.loadApi}
+                  onClick={makeAPICall}
+                  disabled={!(VIDEO_ID && CHANNEL_NAME)}
+                >
+                  Load Stream Data
+                </button>
+              </div>
+            </div>
+            <div className={styles.errorContainer}>
+              <h3>{error}</h3>
             </div>
           </div>
-        </div>
-        <div className="debugContain">
-          <h3>RAW OUTPUT</h3>
-          <pre>
-            <ExpandableText text={output} maxLength={200} />
-          </pre>
+          <div className={clsx(styles.configCard)}>
+            <div className={clsx(styles.configHeader)}>
+              <Settings />
+              <h3>TIMER SETTINGS</h3>
+            </div>
+
+            <div className={clsx(styles.configItem)}>
+              <h4 style={{ flexDirection: "row" }}>
+                FEELING <span className={clsx(styles.Sunny)}>SUNNY?</span>
+              </h4>
+
+              <label className={styles.inputOverwrite}>
+                <input
+                  title="Feelng Sunny?"
+                  type="checkbox"
+                  id="feelSunny"
+                  className={clsx("customRadio")}
+                  defaultChecked={isSunny}
+                  onClick={changeUrl}
+                />
+                <span className={styles.customCheckbox}></span>
+              </label>
+            </div>
+            <div className={clsx(styles.configItem)}>
+              <h4>
+                TEXT STROKE
+                <small>Current Stroke:{rangeStroke}</small>
+              </h4>
+              <label
+                className={clsx(styles.customRange, styles.inputOverwrite)}
+              >
+                <input
+                  title="Time Outline"
+                  type="range"
+                  id="outlineStroke"
+                  value={rangeStroke}
+                  min={1}
+                  max={10}
+                  step={1}
+                  onChange={updateStroke}
+                />
+                <span className={styles.slider}></span>
+              </label>
+            </div>
+            <div className={clsx(styles.configItem)}>
+              <h4>
+                REMOVE SHADOW <small>Makes the timer white</small>{" "}
+              </h4>
+
+              <label className={styles.inputOverwrite}>
+                <input
+                  title="white out mode"
+                  type="checkbox"
+                  id="allWhite"
+                  className="radioAction"
+                  defaultChecked={isWhite}
+                  onClick={updateWhite}
+                />
+                <span className={styles.customCheckbox}></span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
     </div>

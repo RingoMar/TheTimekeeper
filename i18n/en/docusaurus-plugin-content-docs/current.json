@@ -10,5 +10,13 @@
   "sidebar.tutorialSidebar.category.Specify timestamp.link.generated-index.description": {
     "message": "Explore various methods to specify a timestamp.",
     "description": "The generated-index page description for category Specify timestamp in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.OBS Tutorial": {
+    "message": "OBS Tutorial",
+    "description": "The label for category OBS Tutorial in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.OBS Tutorial.link.generated-index.description": {
+    "message": "How The Timekeeper and OBS work hand in hand",
+    "description": "The generated-index page description for category OBS Tutorial in sidebar tutorialSidebar"
   }
 }

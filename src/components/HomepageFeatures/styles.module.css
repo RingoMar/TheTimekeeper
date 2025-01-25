@@ -5,7 +5,121 @@
   width: 100%;
 }
 
+.gap {
+  padding-bottom: 2rem;
+}
+
 .featureSvg {
   height: 200px;
   width: 200px;
+}
+
+.displayRow {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .displayRow {
+    flex-direction: row;
+  }
+}
+
+/* General resets */
+.channelHeader {
+  display: flex;
+  align-items: center;
+  background-color: #0000001a;
+  border: 1px solid #0000001a;
+  border-radius: 0.25rem;
+}
+
+.avatarSection {
+  margin-right: 1rem;
+}
+
+.avatarHalo {
+  position: relative;
+}
+
+.avatarBackground {
+  width: 77px;
+  height: 77px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatarImage {
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  left: 4.7%;
+  top: 4.7%;
+  border-radius: 50%;
+}
+
+.avatarWrapper {
+  width: 64px;
+  height: 64px;
+  position: relative;
+  background-color: inherit;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 9000px;
+}
+
+.channelInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.channelDetails {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.channelName {
+  font-family: "Roobert", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 21px !important;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  fill: #a970ff;
+}
+
+.verifiedBadgeYT {
+  display: inline-flex;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  fill: #ffffff;
+}
+
+.followerCount {
+  font-size: var(--font-size-5);
+  color: var(--color-text-alt);
+}
+
+.HeaderContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
 }

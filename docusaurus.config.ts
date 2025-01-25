@@ -1,7 +1,7 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
-import 'dotenv/config';
+import "dotenv/config";
 
 const config: Config = {
   title: "The Timekeeper",
@@ -136,8 +136,14 @@ const config: Config = {
             },
           ],
         },
+        {
+          title: "Legal",
+          items: [
+            { label: "Privacy", href: "https://ringomar.github.io/policy" },
+          ],
+        },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} RingoMar. This website is not affiliated with Twitch Interactive Inc.`,
+      copyright: `Copyright © ${new Date().getFullYear()} RingoMar. This website is not affiliated or endorsed by Twitch Interactive Inc., Google or YouTube.`,
     },
     prism: {
       theme: prismThemes.github,

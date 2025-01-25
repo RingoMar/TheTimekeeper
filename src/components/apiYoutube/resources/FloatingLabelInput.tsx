@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./FloatingLabelInput.css";
+import styles from "./FloatingLabelInput.module.css";
 
 interface FloatingLabelInputProps {
   label: string;
@@ -22,7 +22,7 @@ const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   const handleBlur = () => setIsFocused(!!value);
 
   return (
-    <div className={`floating-label-input ${isFocused || value ? "active" : ""}`}>
+    <div className={`${styles.floatingLabelInput} ${isFocused || value ? styles.active : ""}`}>
       <input
         type={type}
         value={value}
@@ -30,9 +30,9 @@ const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
         onFocus={handleFocus}
         onBlur={handleBlur}
         onKeyDown={(e) => handleKeyDown(e)}
-        className="floating-input"
+        className={styles.floatingInput}
       />
-      <label className="floating-label">{label}</label>
+      <label className={styles.floatingLabel}>{label}</label>
     </div>
   );
 };

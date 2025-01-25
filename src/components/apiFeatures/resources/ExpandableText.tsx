@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 interface ExpandableTextProps {
   text: string;
-  maxLength?: number; // Optional max length before truncating
+  maxLength?: number;
 }
 
 const ExpandableText: React.FC<ExpandableTextProps> = ({ text, maxLength = 100 }) => {
@@ -29,3 +29,13 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({ text, maxLength = 100 }
 };
 
 export default ExpandableText;
+
+/*
+[deprecated] Example Useage case -> 
+<div className="debugContain">
+  <h3>RAW OUTPUT</h3>
+    <pre>
+      <ExpandableText text={output} maxLength={200} />
+    </pre>
+</div>
+*/

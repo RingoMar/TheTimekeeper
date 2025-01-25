@@ -1,0 +1,44 @@
+.floatingLabelInput {
+    position: relative;
+    margin-top: 20px;
+}
+
+.floatingLabelInput input {
+    width: 100%;
+    padding: 12px 8px 12px 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.floatingLabelInput input:focus {
+    border-color: #ff5656;
+}
+
+.floatingLabelInput .floatingLabel {
+    position: absolute;
+    left: 8px;
+    top: 12px;
+    color: #999;
+    font-size: 16px;
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+    padding: 0.5px 4px;
+}
+
+.floatingLabelInput.active .floatingLabel {
+    top: -8px;
+    left: 8px;
+    font-size: 12px;
+    background-color: #ff5656;
+    color: #fff;
+}
+
+.floatingLabelInput input:focus+.floatingLabel {
+    top: -8px;
+    left: 8px;
+    font-size: 12px;
+    color: #FFF;
+}

@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from "react";
 import TimeSelector from "./resources/TimeSelector";
-import "../apiFeatures/styles.api.css";
+import "./styles.custom.css";
 import CopyIcon from "./resources/copy";
 
 export default function GenerateCustomTime(): JSX.Element {
