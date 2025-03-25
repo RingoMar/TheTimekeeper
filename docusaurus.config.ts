@@ -66,6 +66,14 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
+    announcementBar: {
+      id: "support_us",
+      content:
+        'Try the new timer with an advanced time picker and new timer formats  on my new domain <a rel="noopener noreferrer" href="https://timekeeper.ringomar.com">ringomar.com!</a>',
+      backgroundColor: "#fafbfc",
+      textColor: "#091E42",
+      isCloseable: false,
+    },
     colorMode: {
       defaultMode: "dark",
       disableSwitch: false,
