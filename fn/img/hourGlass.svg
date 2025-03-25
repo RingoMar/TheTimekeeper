@@ -1,0 +1,23 @@
+<svg width="195px" height="195px" viewBox="-2 -2 24.00 24.00" version="1.1" xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" fill="#E24331" transform="rotate(45)">
+    <g id="SVGRepo_bgCarrier" stroke-width="0">
+        <rect x="-2" y="-2" width="24.00" height="24.00" rx="12" fill="#E9B1FF" strokewidth="0">
+        </rect>
+    </g>
+    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+    <g id="SVGRepo_iconCarrier">
+        <title>time / 26 - time, hourglass, sand, bottom, timer, watch icon</title>
+        <g id="Free-Icons" stroke="none" stroke-width="1" fill="none" fillRule="evenodd">
+            <g transform="translate(-230.000000, -748.000000)" id="Group">
+                <g transform="translate(227.000000, 746.000000)" id="Shape">
+                    <path
+                        d="M4,3 L4,4.77236651 C4,5.96625907 4.64816908,7.08665789 5.74030881,7.78059385 L18.2596912,15.735299 C19.3518309,16.429235 20,17.5496338 20,18.7435264 L20,21 L4,21 L4,18.7435264 C4,17.5496338 4.64816908,16.429235 5.74030881,15.735299 L18.2596912,7.78059385 C19.3518309,7.08665789 20,5.96625907 20,4.77236651 L20,3 L4,3 Z"
+                        stroke="#FF267C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> </path>
+                    <path
+                        d="M11.7926812,14.8216721 L7.66910673,17.9549713 C7.49560596,18.0868059 7.44778491,18.3556079 7.56229541,18.5553573 C7.63196026,18.676879 7.74997665,18.75 7.87644635,18.75 L16.1235953,18.75 C16.3314779,18.75 16.5,18.5559824 16.5,18.3166496 C16.5,18.1710465 16.4364877,18.0351756 16.3309349,17.9549713 L12.2073604,14.8216721 C12.0815952,14.7261093 11.9184464,14.7261093 11.7926812,14.8216721 Z"
+                        fill="#FF267C"> </path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
