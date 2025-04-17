@@ -147,7 +147,7 @@ const config: Config = {
         {
           title: "Legal",
           items: [
-            { label: "Privacy", href: "https://ringomar.github.io/policy" },
+            { label: "Privacy", href: "https://www.ringomar.com/privacy-policy" },
           ],
         },
       ],

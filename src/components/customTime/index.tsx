@@ -10,7 +10,7 @@ export default function GenerateCustomTime(): JSX.Element {
   const [isWhite, setIsWhite] = useState(false);
   const [rangeStroke, setRangeStroke] = useState(2);
   const [uriName, setUriName] = useState<string>(
-    "https://feelsunnyman.github.io/tools/timer/"
+    "https://ringomar.github.io/timer/"
   );
   const [createdAt, setcreatedAt] = useState("");
   const [copyButton, setcopyButton] = useState<string | ReactNode>(
@@ -31,7 +31,7 @@ export default function GenerateCustomTime(): JSX.Element {
     if (newIsSunny) {
       url = newIsDown
         ? "https://feelsunnyman.github.io/tools/down/"
-        : "https://feelsunnyman.github.io/tools/timer/";
+        : "https://ringomar.github.io/timer/";
     } else {
       url = newIsDown
         ? "https://ringomar.github.io/timer/down"
@@ -142,23 +142,6 @@ export default function GenerateCustomTime(): JSX.Element {
                   ⬇️?
                 </label>
               </div>
-              <div className="SunCheck">
-                <label
-                  htmlFor="feelSunny"
-                  title="Feelng Sunny?"
-                  className="radioBtn"
-                >
-                  <input
-                    title="Feelng Sunny?"
-                    type="checkbox"
-                    id="feelSunny"
-                    className="radioAction"
-                    defaultChecked={isSunny}
-                    onClick={changeUrl}
-                  />
-                  ☀️?
-                </label>
-              </div>
               <div className="setOutline">
                 <label
                   htmlFor="outlineStroke"
@@ -167,7 +150,7 @@ export default function GenerateCustomTime(): JSX.Element {
                 >
                   Text Outline: {rangeStroke}
                   <input
-                    title="Feelng Sunny?"
+                    title="Outline"
                     type="range"
                     id="outlineStroke"
                     value={rangeStroke}
@@ -187,7 +170,7 @@ export default function GenerateCustomTime(): JSX.Element {
                 >
                   White Text Mode
                   <input
-                    title="Feelng Sunny?"
+                    title="white mode?"
                     type="checkbox"
                     id="allWhite"
                     className="radioAction"

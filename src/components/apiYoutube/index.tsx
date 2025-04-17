@@ -43,7 +43,7 @@ export default function APIYTCallWebsite(): JSX.Element {
   const [error, setError] = useState("");
   const [updated, setUpdated] = useState(false);
   const [uriName, setUriName] = useState<string>(
-    "https://feelsunnyman.github.io/tools/timer/"
+    "https://ringomar.github.io/timer/"
   );
   const [createdAt, setcreatedAt] = useState("");
   const [timeParms, setTimeParms] = useState({
@@ -60,7 +60,7 @@ export default function APIYTCallWebsite(): JSX.Element {
     setUriName(
       isSunny
         ? "https://ringomar.github.io/timer/"
-        : "https://feelsunnyman.github.io/tools/timer/"
+        : "https://ringomar.github.io/timer/"
     );
   };
 
@@ -249,24 +249,6 @@ export default function APIYTCallWebsite(): JSX.Element {
             <div className={clsx(styles.configHeader)}>
               <Settings />
               <h3>TIMER SETTINGS</h3>
-            </div>
-
-            <div className={clsx(styles.configItem)}>
-              <h4 style={{ flexDirection: "row" }}>
-                FEELING <span className={clsx(styles.Sunny)}>SUNNY?</span>
-              </h4>
-
-              <label className={styles.inputOverwrite}>
-                <input
-                  title="Feelng Sunny?"
-                  type="checkbox"
-                  id="feelSunny"
-                  className={clsx("customRadio")}
-                  defaultChecked={isSunny}
-                  onClick={changeUrl}
-                />
-                <span className={styles.customCheckbox}></span>
-              </label>
             </div>
             <div className={clsx(styles.configItem)}>
               <h4>
